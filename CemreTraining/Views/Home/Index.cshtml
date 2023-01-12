@@ -1,0 +1,208 @@
+﻿@model IEnumerable<LicenseInfoDto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+<!-- Modals -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Example</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="button" class="btn btn-primary">Kaydet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="modal fade" id="example2Modal" tabindex="-1" aria-labelledby="example2ModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="example2ModalLabel">Example 2</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+        <button type="button" class="btn btn-primary">Kaydet</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="maintenanceNoteModal" tabindex="-1" aria-labelledby="maintenanceNoteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="maintenanceNoteModalLabel">Ekle</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Kapat</button>
+                <button type="button" class="btn btn-primary">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Container -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <span>Plaka : </span>
+            <form>
+                <input type="text" id="licences" class="form-select" placeholder="Plaka giriniz" />
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>
+                Bakım Türü :
+            </span>
+            <select id="maintenanceType" class="form-select">
+                <option selected></option>
+                <option value="1">Bakım Türü 1</option>
+                <option value="2">Bakım Türü 2</option>
+                <option value="3">Bakım Türü 3</option>
+            </select>
+        </div>
+        <div class="col">
+            <span>Bakım Tarihi :</span>
+            <input type="date" id="maintenanceDate" class="form-select" name="MaintenanceDate" />
+        </div>
+        <div class="col">
+            <span>İleri Bakım Tarihi :</span>
+            <input type="date" id="futureMaintenanceDate" class="form-select" name="FutureMaintenanceDate" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+            <span>
+                Bakım Km :
+            </span>
+            <input type="number" id="maintenanceKm" class="form-select" name="MaintenanceKm" />
+        </div>
+        <div class="col">
+            <span>
+                İleri Bakım Km :
+            </span>
+            <input type="number" id="futureMaintenanceKm" class="form-select" name="FutureMaintenanceKm" />
+        </div>
+        <div class="col">
+            <span>
+                Bakım Tutarı :
+            </span>
+            <input type="number" id="maintenanceCost" class="form-select" name="MaintenanceCost" />
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            Bakım Notu : <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#maintenanceNoteModal">+</button>
+        </div>
+        <div class="col-md-2 offset-7">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"><i class="fa fa-user-circle" aria-hidden="true"></i></button>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#example2Modal"><i class="fa fa-user-circle" aria-hidden="true"></i></button>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-3 offset-9">
+            <button type="button" id="submitBtn" class="btn btn-primary"><i class="fa fa-search" aria-hidden="true"> Ara</i></button>
+        </div>
+    </div>
+    <table id="dataTable" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Info1</th>
+                <th>Info2</th>
+                <th>Info3</th>
+                <th>Info4</th>
+                <th>Info5</th>
+                @*<th>İşlemler</th>*@
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            $('#dataTable').hide();
+            $('#licences').autocomplete({
+                source: '@Url.Action("Search", "Home")',
+                //Delay koymamızın sebebi her tuş basımında ajax call yapılmasını istemiyoruz
+                delay: 500,
+                select: function (e, i) {
+                    //Burada plaka seçildiğinde olması gereken bir işlem var ise onu yönetebilirsin
+                },
+                //Daha sonra minLengthi değiştirebilirsin
+                minLength: 0
+            });
+            $('#submitBtn').click(function () {
+                $('#dataTable').dataTable({
+                    "destroy": true,
+                    "processing": true,
+                    "serverSide": true,
+                    "filter": false,
+                    "ajax": {
+                        "url": '@Url.Action("GetTableData", "Home")',
+                        "type": 'POST',
+                        "datatype": 'json',
+                        "data": {
+                            'licence': $('#licences').val(),
+                            'maintenanceType': $('#maintenanceType').val(),
+                            'maintenanceDate': $('#maintenanceDate').val(),
+                            'futureMaintenanceDate': $('#futureMaintenanceDate').val(),
+                            'maintenanceKm': $('#maintenanceKm').val(),
+                            'futureMaintenanceKm': $('#futureMaintenanceKm').val(),
+                            'maintenanceCost': $('#maintenanceCost').val()
+                        },
+                        "dataSrc": function ( json ) {
+                            $('#dataTable').show();
+                            return json.data;
+                        } 
+                    },
+                    "language": {
+                        "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Turkish.json"
+                    },
+                    "columnDefs": [{
+                        "defaultContent": "-",
+                        "targets": "_all",
+                        "orderable": false,
+                        "searchable": false
+                    }],
+                    "columns": [
+                        { "data": "id", "name": "Id", "autoWidth": true },
+                        { "data": "info1", "name": "Info1", "autoWidth": true },
+                        { "data": "info2", "name": "Info2", "autoWidth": true },
+                        { "data": "info3", "name": "Info3", "autoWidth": true },
+                        { "data": "info4", "name": "Info4", "autoWidth": true },
+                        { "data": "info5", "name": "Info5", "autoWidth": true },
+                        //{
+                        //    "render": function (data, row) {
+                        //        return "<button type='button' class='btn btn-danger'><i class='fa fa-trash' aria-hidden='true'> Sil</i></button>";
+                        //    },
+                        //    "width": 100
+                        //},
+                    ],
+
+                });
+            })
+        });
+    </script>
+}
